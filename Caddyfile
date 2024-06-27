@@ -1,0 +1,13 @@
+{$REGISTRY_URL} {
+  basic_auth {
+     {$DOCKER_USER} {$DOCKER_PASSWORD}
+  }
+  reverse_proxy registry:5000
+}
+
+ui.docker.gazooks.app {
+  basic_auth {
+     {$DOCKER_USER} {$DOCKER_PASSWORD}
+  }
+  reverse_proxy registry-ui:80
+}

@@ -1,0 +1,49 @@
+services:
+  caddy:
+    image: caddy:2.8-alpine
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - ./auth:/auth
+      - caddy_data:/data
+      - caddy_config:/config
+    env_file:
+      - .env
+  registry-ui:
+    image: joxit/docker-registry-ui:main
+    restart: always
+    environment:
+      SINGLE_REGISTRY: true
+      REGISTRY_TITLE: Gazooks Docker Registry UI
+      DELETE_IMAGES: true
+      NGINX_PROXY_PASS_URL: http://registry:5000
+      SHOW_CONTENT_DIGEST: true
+      SHOW_CATALOG_NB_TAGS: true
+      CATALOG_MIN_BRANCHES: 1
+      CATALOG_MAX_BRANCHES: 1
+      TAGLIST_PAGE_SIZE: 100
+      CATALOG_ELEMENTS_LIMIT: 1000
+    container_name: registry-ui
+  registry:
+    image: registry:2
+    depends_on:
+      - caddy
+    restart: always
+    environment:
+      REGISTRY_STORAGE_DELETE_ENABLED: true
+      SINGLE_REGISTRY: true
+      REGISTRY_HTTP_HEADERS_Access-Control-Allow-Origin: '[${REGISTRY_URL}]'
+      REGISTRY_HTTP_HEADERS_Access-Control-Allow-Methods: '[HEAD,GET,OPTIONS,DELETE]'
+      REGISTRY_HTTP_HEADERS_Access-Control-Allow-Credentials: '[true]'
+      REGISTRY_HTTP_HEADERS_Access-Control-Allow-Headers: '[Authorization,Accept,Cache-Control]'
+      REGISTRY_HTTP_HEADERS_Access-Control-Expose-Headers: '[Docker-Content-Digest]'
+    volumes:
+      - /var/lib/registry:/var/lib/registry
+
+volumes:
+  caddy_data:
+  caddy_config:
