@@ -5,7 +5,7 @@
   reverse_proxy registry:5000
 }
 
-ui.docker.gazooks.app {
+ui.{$REGISTRY_URL} {
   basic_auth {
      {$DOCKER_USER} {$DOCKER_PASSWORD}
   }
