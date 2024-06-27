@@ -18,7 +18,7 @@ services:
     restart: always
     environment:
       SINGLE_REGISTRY: true
-      REGISTRY_TITLE: Gazooks Docker Registry UI
+      REGISTRY_TITLE: Registry UI
       DELETE_IMAGES: true
       NGINX_PROXY_PASS_URL: http://registry:5000
       SHOW_CONTENT_DIGEST: true
